@@ -9,8 +9,13 @@ import grower.tasks.Task;
  * Handles command-line input and output for the application.
  */
 public class Ui {
+    /** Divider printed before and after each CLI command. */
     private static final String SEPARATOR = "-------------------------------------------------------------";
+
+    /** Output produced by the current command for retrieval by the GUI. */
     private final StringBuilder output = new StringBuilder();
+
+    /** Reads commands entered through the command-line interface. */
     private final Scanner scanner;
 
     /**

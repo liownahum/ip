@@ -15,11 +15,19 @@ import grower.ui.Ui;
  * Runs the Grower task-management application.
  */
 public class Grower {
+    /** Default location used to persist tasks between application sessions. */
     private static final String DEFAULT_FILE_PATH = "./data/grower.txt";
 
+    /** Formats command results for the CLI and captures them for the GUI. */
     private final Ui ui;
+
+    /** Tasks maintained during the current application session. */
     private final TaskList taskList;
+
+    /** Loads and saves the task list using the configured data file. */
     private final Storage storage;
+
+    /** Whether the application should continue accepting commands. */
     private boolean continueRun;
 
     /**

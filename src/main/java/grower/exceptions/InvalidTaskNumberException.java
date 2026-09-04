@@ -14,6 +14,13 @@ public class InvalidTaskNumberException extends GrowerException {
         super(createMessage(index, numberOfTasks));
     }
 
+    /**
+     * Creates an error message that includes the valid one-based task-number range.
+     *
+     * @param index Zero-based index that was requested.
+     * @param numberOfTasks Current number of tasks.
+     * @return Message describing why the requested task number is invalid.
+     */
     private static String createMessage(int index, int numberOfTasks) {
         if (numberOfTasks == 0) {
             return "There are no tasks in the list.";

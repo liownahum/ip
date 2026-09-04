@@ -1,10 +1,14 @@
 package exceptions;
 
 /**
- * Base exception class for all custom exceptions in the Grower application.
- * This allows for catching all application-specific errors with a single catch block
+ * Represents the base type for all application-specific exceptions.
  */
 public class GrowerException extends Exception {
+    /**
+     * Creates an exception with the specified message.
+     *
+     * @param message Description of the error.
+     */
     public GrowerException(String message) {
         super(message);
     }

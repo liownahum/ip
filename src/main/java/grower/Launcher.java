@@ -4,7 +4,8 @@ import grower.gui.Main;
 import javafx.application.Application;
 
 /**
- * A launcher class to workaround classpath issues.
+ * Launches JavaFX through a class that does not extend {@link Application}.
+ * This avoids JavaFX runtime classpath issues when starting the packaged application.
  */
 public class Launcher {
     /**

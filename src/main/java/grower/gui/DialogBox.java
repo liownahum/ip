@@ -19,11 +19,20 @@ import javafx.scene.layout.HBox;
  * and a label containing text from the speaker.
  */
 public class DialogBox extends HBox {
+    /** Label containing the message text. */
     @FXML
     private Label dialog;
+
+    /** Image identifying the speaker of the message. */
     @FXML
     private ImageView displayPicture;
 
+    /**
+     * Loads the dialog-box layout and fills it with a message and speaker image.
+     *
+     * @param text Message displayed in the dialog box.
+     * @param img Image identifying the speaker.
+     */
     private DialogBox(String text, Image img) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
@@ -49,6 +58,13 @@ public class DialogBox extends HBox {
         dialog.getStyleClass().add("reply-label");
     }
 
+    /**
+     * Creates a dialog box for a command entered by the user.
+     *
+     * @param text Command text.
+     * @param img User's display image.
+     * @return Dialog box aligned to the right.
+     */
     public static DialogBox getUserDialog(String text, Image img) {
         return new DialogBox(text, img);
     }

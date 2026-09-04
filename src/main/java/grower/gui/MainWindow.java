@@ -8,24 +8,39 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 /**
- * Controller for the main GUI.
+ * Controls the main Grower window and passes user commands to the application logic.
  */
 public class MainWindow extends AnchorPane {
+    /** Scrollable region containing the conversation. */
     @FXML
     private ScrollPane scrollPane;
+
+    /** Vertical container to which new dialog boxes are appended. */
     @FXML
     private VBox dialogContainer;
+
+    /** Field in which the user enters a command. */
     @FXML
     private TextField userInput;
+
+    /** Button that submits the command currently in {@link #userInput}. */
     @FXML
     private Button sendButton;
 
+    /** Shared application logic injected after the FXML document is loaded. */
     private Grower grower;
 
+    /** Avatar displayed beside messages entered by the user. */
     private final Image userImage = new Image(getClass().getResourceAsStream("/images/user.jpg"));
+
+    /** Avatar displayed beside responses produced by Grower. */
     private final Image growerImage = new Image(getClass().getResourceAsStream("/images/grower.png"));
 
+    /**
+     * Configures the conversation to scroll down as new dialog boxes increase its height.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
@@ -41,8 +56,9 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
-     * the dialog container. Clears the user input after processing.
+     * Processes the entered command and appends the user message and Grower response
+     * to the conversation. Blank commands are ignored, and input is disabled after
+     * the {@code bye} command.
      */
     @FXML
     private void handleUserInput() {
