@@ -99,10 +99,15 @@ public class TaskList {
                 .toList();
     }
 
+    /**
+     * Returns tasks whose descriptions contain the supplied keyword.
+     *
+     * @param keyword Text to search for in task descriptions.
+     * @return Matching tasks in their original display order.
+     */
     public List<Task> findTasks(String keyword) {
         return listOfTasks.stream()
                 .filter(task -> task.getDescription().contains(keyword))
                 .toList();
     }
 }
-

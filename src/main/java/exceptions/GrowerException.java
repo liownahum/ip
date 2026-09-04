@@ -1,4 +1,4 @@
-package grower.growerExceptions;
+package exceptions;
 
 /**
  * Base exception class for all custom exceptions in the Grower application.

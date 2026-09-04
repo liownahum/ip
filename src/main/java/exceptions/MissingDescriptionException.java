@@ -1,4 +1,4 @@
-package grower.growerExceptions;
+package exceptions;
 
 /**
  * Error representing a missing required description.
