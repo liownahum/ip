@@ -9,8 +9,13 @@ import grower.tasks.Task;
  * Handles command-line input and output for the application.
  */
 public class Ui {
+    /** Divider printed before and after each CLI command. */
     private static final String SEPARATOR = "-------------------------------------------------------------";
 
+    /** Output produced by the current command for retrieval by the GUI. */
+    private final StringBuilder output = new StringBuilder();
+
+    /** Reads commands entered through the command-line interface. */
     private final Scanner scanner;
 
     /**
@@ -24,7 +29,7 @@ public class Ui {
      * Displays the welcome message and artwork.
      */
     public void showWelcome() {
-        System.out.println("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠖⠒⠢⣄⣀⡀⣀⣀⠀⡠⠔⠒⠒⢤⡀⠀⠀⠀⠀⠀⠀\n"
+        display("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠖⠒⠢⣄⣀⡀⣀⣀⠀⡠⠔⠒⠒⢤⡀⠀⠀⠀⠀⠀⠀\n"
                 + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⡇⠀⠀⠀⠁⠠⡋⠀⠀⠙⠦⠀⠀⠀⠀⣧⠤⣀⠀⠀⠀⠀\n"
                 + "⠀⠀⠀⠀⠀⠀⠀⡠⠖⠊⠑⠲⣄⣀⣠⠖⠘⠛⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⢸⠇⠀⠀⠀\n"
                 + "⠀⠀⠀⠀⠀⠀⣸⣇⡀⠀⠀⠈⠁⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠋⠲⣄⠀⠀\n"
@@ -43,7 +48,7 @@ public class Ui {
                 + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠒⢋⣁⡀⠀⠀⠀⠀⠀⠘⠢⢄⣀ ( (_ \\ )   /(  O )\\ /\\ /(___)) _)  )   /\n"
                 + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠁⠉⠙⠒⠤⣘⣗⠒⠒⠒⠚⠛⠃\\___/(__\\_) \\__/ (_/\\_)    (____)(__\\_)\n"
         );
-        System.out.println("Goodday to you, I am Grow-er, your accountability partner! \n"
+        display("Goodday to you, I am Grow-er, your accountability partner! \n"
                 + "i'm here to support your growth! What can I do for you today \n");
     }
 
@@ -60,7 +65,7 @@ public class Ui {
      * Displays a separator between command interactions.
      */
     public void showSeparator() {
-        System.out.println(SEPARATOR);
+        display(SEPARATOR);
     }
 
     /**
@@ -69,7 +74,7 @@ public class Ui {
      * @param task Task that was added.
      */
     public void showTaskAdded(Task task) {
-        System.out.println("Added:\n" + task);
+        display("Added:\n" + task);
     }
 
     /**
@@ -78,7 +83,7 @@ public class Ui {
      * @param task Task that was deleted.
      */
     public void showTaskDeleted(Task task) {
-        System.out.println("Removed:\n" + task);
+        display("Removed:\n" + task);
     }
 
     /**
@@ -87,8 +92,8 @@ public class Ui {
      * @param task Task that was marked.
      */
     public void showTaskMarked(Task task) {
-        System.out.println("Marking following task as done!");
-        System.out.println(task);
+        display("Marking following task as done!");
+        display(task.toString());
     }
 
     /**
@@ -97,8 +102,8 @@ public class Ui {
      * @param task Task that was unmarked.
      */
     public void showTaskUnmarked(Task task) {
-        System.out.println("Marking following task as not done :(");
-        System.out.println(task);
+        display("Marking following task as not done :(");
+        display(task.toString());
     }
 
     /**
@@ -108,12 +113,12 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            System.out.println("Your task list is empty.");
+            display("Your task list is empty.");
             return;
         }
 
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
+            display((i + 1) + ". " + tasks.get(i));
         }
     }
 
@@ -123,7 +128,7 @@ public class Ui {
      * @param message Error message to display.
      */
     public void showError(String message) {
-        System.out.println(message);
+        display(message);
     }
 
     /**
@@ -132,14 +137,14 @@ public class Ui {
      * @param message Message to display.
      */
     public void showMessage(String message) {
-        System.out.println(message);
+        display(message);
     }
 
     /**
      * Displays the goodbye message.
      */
     public void showGoodbye() {
-        System.out.println("Seeya soon");
+        display("Seeya soon");
     }
 
     /**
@@ -149,14 +154,49 @@ public class Ui {
         scanner.close();
     }
 
+    /**
+     * Displays tasks whose descriptions match a search keyword.
+     *
+     * @param tasks Matching tasks to display.
+     */
     public void showSearchResults(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            System.out.println("No results!!!!");
+            display("No results!!!!");
             return;
         }
 
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
+            display((i + 1) + ". " + tasks.get(i));
         }
+    }
+
+    /**
+     * Records and displays a response message.
+     *
+     * @param message Message to record.
+     */
+    private void display(String message) {
+        if (!output.isEmpty()) {
+            output.append(System.lineSeparator());
+        }
+
+        output.append(message);
+        System.out.println(message);
+    }
+
+    /**
+     * Removes output left by the previous command.
+     */
+    public void clearOutput() {
+        output.setLength(0);
+    }
+
+    /**
+     * Returns output produced by the current command.
+     *
+     * @return Current response text.
+     */
+    public String getOutput() {
+        return output.toString();
     }
 }

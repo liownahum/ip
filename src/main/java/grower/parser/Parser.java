@@ -11,6 +11,7 @@ import grower.commands.DeadlineCommand;
 import grower.commands.DeleteCommand;
 import grower.commands.EchoCommand;
 import grower.commands.EventCommand;
+import grower.commands.FindCommand;
 import grower.commands.ListCommand;
 import grower.commands.MarkCommand;
 import grower.commands.ToDoCommand;
@@ -42,7 +43,6 @@ public class Parser {
         DELETE,
         FIND
     }
-
     /**
      * Returns the command represented by the supplied user input.
      *

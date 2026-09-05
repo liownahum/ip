@@ -15,19 +15,86 @@ import grower.ui.Ui;
  * Runs the Grower task-management application.
  */
 public class Grower {
+    /** Default location used to persist tasks between application sessions. */
+    private static final String DEFAULT_FILE_PATH = "./data/grower.txt";
+
+    /** Formats command results for the CLI and captures them for the GUI. */
+    private final Ui ui;
+
+    /** Tasks maintained during the current application session. */
+    private final TaskList taskList;
+
+    /** Loads and saves the task list using the configured data file. */
+    private final Storage storage;
+
+    /** Whether the application should continue accepting commands. */
+    private boolean continueRun;
+
     /**
-     * Starts the application and runs its command loop.
+     * Creates a Grower application backed by the default data file.
+     */
+    public Grower() {
+        this(DEFAULT_FILE_PATH);
+    }
+
+    /**
+     * Creates a Grower application backed by the specified data file.
+     *
+     * @param filePath Path used to load and save tasks.
+     */
+    public Grower(String filePath) {
+        this.ui = new Ui();
+        this.taskList = new TaskList();
+        this.storage = new Storage(filePath);
+        this.continueRun = true;
+
+        loadTasks();
+    }
+
+    /**
+     * Starts the command-line interface.
      *
      * @param args Command-line arguments; currently unused.
      */
     public static void main(String[] args) {
-        Ui ui = new Ui();
-        TaskList taskList = new TaskList();
-        Storage storage = new Storage("./data/grower.txt");
+        new Grower().runCli();
+    }
 
-        ui.showWelcome();
+    /**
+     * Processes one command using the same logic for both the CLI and GUI.
+     *
+     * @param input Command entered by the user.
+     * @return Response produced by the command.
+     */
+    public String getResponse(String input) {
+        ui.clearOutput();
 
-        //Attempt to load tasks from file
+        try {
+            Command command = Parser.parse(input);
+            continueRun = command.execute(taskList, ui);
+            storage.saveTasks(taskList.getTaskData());
+        } catch (GrowerException e) {
+            ui.showError(e.getMessage());
+        } catch (IOException e) {
+            ui.showError("Could not access the task data file. Please try again.");
+        }
+
+        return ui.getOutput();
+    }
+
+    /**
+     * Returns whether Grower should continue accepting commands.
+     *
+     * @return {@code false} after the bye command, and {@code true} otherwise.
+     */
+    public boolean isRunning() {
+        return continueRun;
+    }
+
+    /**
+     * Restores tasks from storage when the application starts.
+     */
+    private void loadTasks() {
         try {
             List<String> savedTasks = storage.loadTasks();
 
@@ -42,25 +109,21 @@ public class Grower {
         } catch (IOException e) {
             ui.showError("Could not load saved tasks.");
         }
+    }
 
-        //Boolean controlling if the chatbot should terminate or continue looping for user input cycle
-        boolean continueRun = true;
+    /**
+     * Runs the original command-line input loop for debugging and CLI use.
+     */
+    private void runCli() {
+        ui.showWelcome();
 
-        //Loops through getting user input, executing command, checking if run should continue
         while (continueRun) {
-            try {
-                String input = ui.readCommand();
-                ui.showSeparator();
-                Command command = Parser.parse(input);
-                continueRun = command.execute(taskList, ui);
-                storage.saveTasks(taskList.getTaskData());
-            } catch (GrowerException e) {
-                ui.showError(e.getMessage());
-            } catch (IOException e) {
-                ui.showError("Could not access the task data file, pls try again blud");
-            }
+            String input = ui.readCommand();
+            ui.showSeparator();
+            getResponse(input);
             ui.showSeparator();
         }
+
         ui.close();
     }
 }
