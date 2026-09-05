@@ -92,8 +92,7 @@ public class Ui {
      * @param task Task that was marked.
      */
     public void showTaskMarked(Task task) {
-        display("Marking following task as done!");
-        display(task.toString());
+        display("Marking following task as done!", task.toString());
     }
 
     /**
@@ -102,8 +101,7 @@ public class Ui {
      * @param task Task that was unmarked.
      */
     public void showTaskUnmarked(Task task) {
-        display("Marking following task as not done :(");
-        display(task.toString());
+        display("Marking following task as not done :(", task.toString());
     }
 
     /**
@@ -171,17 +169,19 @@ public class Ui {
     }
 
     /**
-     * Records and displays a response message.
+     * Records and displays one or more response messages.
      *
-     * @param message Message to record.
+     * @param messages Messages to record in the supplied order.
      */
-    private void display(String message) {
-        if (!output.isEmpty()) {
-            output.append(System.lineSeparator());
-        }
+    private void display(String... messages) {
+        for (String message : messages) {
+            if (!output.isEmpty()) {
+                output.append(System.lineSeparator());
+            }
 
-        output.append(message);
-        System.out.println(message);
+            output.append(message);
+            System.out.println(message);
+        }
     }
 
     /**
