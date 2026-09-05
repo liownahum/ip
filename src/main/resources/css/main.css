@@ -1,42 +1,68 @@
 .root {
-    main-color: rgb(237, 255, 242);       /* Create a looked-up color called "main-color" within root. */
-    -fx-background-color: main-color;
-    -fx-background-image: url("../../../resources/background.jpg");
+    /* Create a looked-up color called "main-color" within root. */
+    -fx-background-image: url("/images/background.jpg ");
     -fx-background-size: cover;
+
+    gruvbox-bg0: #282828;
+    gruvbox-bg1: #3c3836;
+    gruvbox-bg2: #504945;
+    gruvbox-bg3: #665c54;
+
+    gruvbox-fg0: #fbf1c7;
+    gruvbox-fg1: #ebdbb2;
+    gruvbox-muted: #a89984;
+
+    gruvbox-red: #fb4934;
+    gruvbox-green: #b8bb26;
+    gruvbox-yellow: #fabd2f;
+    gruvbox-blue: #83a598;
+    gruvbox-aqua: #8ec07c;
+    gruvbox-orange: #fe8019;
+
+    -fx-background-color: gruvbox-bg0;
+    -fx-font-family: "Inter";
 }
 
 .text-field {
-    -fx-background-color: #d9ffe2;
-    -fx-font: 20px "Arial";
+    -fx-background-color: gruvbox-bg1;
+    -fx-text-fill: gruvbox-fg1;
+    -fx-prompt-text-fill: gruvbox-muted;
+    -fx-border-color: gruvbox-bg3;
+    -fx-border-width: 1px;
+    -fx-font-size: 16px;
+}
+
+.text-field:focused {
+    -fx-border-color: gruvbox-blue;
 }
 
 .button {
-    -fx-background-color: mediumspringgreen;
-    -fx-font: italic bold 16px "Arial";
+    -fx-background-color: gruvbox-blue;
+    -fx-text-fill: gruvbox-bg0;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter";
 }
 
 .button:hover {
-    -fx-background-color:cyan;
-    -fx-font-size: 18px;
+    -fx-background-color: gruvbox-aqua;
 }
 
 .button:pressed {
-    -fx-background-color:orange;
-    -fx-font-size: 20px;
+    -fx-background-color: gruvbox-orange;
 }
 
 .scroll-pane,
 .scroll-pane .viewport {
-    -fx-background-color: transparent;
+    -fx-background-color: gruvbox-bg0;
 }
 
 .scroll-bar {
-    -fx-font-size: 10px;  /* Change width of scroll bar. */
-    -fx-background-color: main-color;
+    -fx-background-color: gruvbox-bg1;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #ff9cb4;
+    -fx-background-color: gruvbox-bg3;
     -fx-background-radius: 1em;
 }
 
