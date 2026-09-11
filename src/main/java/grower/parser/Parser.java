@@ -225,7 +225,6 @@ public class Parser {
                 }
                 return new FindCommand(args.trim());
             default:
-                assert false : "Missing switch case for command type: " + commandType;
                 throw new UnknownCommandException("I'm sorry, but I don't know what that means :-(");
         }
     }

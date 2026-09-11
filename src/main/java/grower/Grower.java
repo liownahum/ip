@@ -71,7 +71,6 @@ public class Grower {
 
         try {
             Command command = Parser.parse(input);
-            assert command != null : "Parser must return a command when parsing succeeds";
             continueRun = command.execute(taskList, ui);
             storage.saveTasks(taskList.getTaskData());
         } catch (GrowerException e) {
