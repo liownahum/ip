@@ -44,6 +44,15 @@ public class Parser {
         FIND
     }
 
+    /**
+     * Converts a one-based user task number to a zero-based index.
+     * TaskList checks whether the resulting index refers to an existing task.
+     *
+     * @param args Task number supplied by the user.
+     * @param command Command requiring the task number, used in error messages.
+     * @return Zero-based task index.
+     * @throws GrowerException If the task number is missing or is not an integer.
+     */
     private static int parseTaskIndex(String args, CommandType command) throws GrowerException {
         if (args.isEmpty()) {
             throw new GrowerException("You must provide a task number to " + command + ".");
@@ -56,16 +65,37 @@ public class Parser {
         }
     }
 
+    /**
+     * Creates a mark command from a user-supplied task number.
+     *
+     * @param args Task number to mark.
+     * @return Command that marks the selected task as completed.
+     * @throws GrowerException If the task number is missing or is not an integer.
+     */
     private static Command parseMark(String args) throws GrowerException {
         int index = parseTaskIndex(args, CommandType.MARK);
         return new MarkCommand(index);
     }
 
+    /**
+     * Creates an unmark command from a user-supplied task number.
+     *
+     * @param args Task number to unmark.
+     * @return Command that marks the selected task as not completed.
+     * @throws GrowerException If the task number is missing or is not an integer.
+     */
     private static Command parseUnmark(String args) throws GrowerException {
         int index = parseTaskIndex(args, CommandType.UNMARK);
         return new UnmarkCommand(index);
     }
 
+    /**
+     * Validates a description and creates a to-do command.
+     *
+     * @param args Description of the to-do task.
+     * @return Command that adds the to-do task.
+     * @throws GrowerException If the description is empty.
+     */
     private static Command parseTodo(String args) throws GrowerException {
         if (args.isEmpty()) {
             throw new MissingDescriptionException("The description for a todo cannot be empty.");
@@ -73,6 +103,13 @@ public class Parser {
         return new ToDoCommand(args);
     }
 
+    /**
+     * Parses a task description and its deadline using the /by separator.
+     *
+     * @param args Description and deadline in the user input format.
+     * @return Command that adds the deadline task.
+     * @throws GrowerException If the arguments are empty or the format or date is invalid.
+     */
     private static Command parseDeadline(String args) throws GrowerException {
         if (args.isEmpty()) {
             throw new MissingDescriptionException("The description for a deadline cannot be empty.");
@@ -92,6 +129,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses an event description and time range using the /from and /to separators.
+     *
+     * @param args Description, start time, and end time in the user input format.
+     * @return Command that adds the event task.
+     * @throws GrowerException If the arguments are empty, the format or dates are invalid,
+     *     or the end is not after the start.
+     */
     private static Command parseEvent(String args) throws GrowerException {
         if (args.isEmpty()) {
             throw new MissingDescriptionException("The description for an event cannot be empty.");
@@ -119,6 +164,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Creates a delete command from a user-supplied task number.
+     *
+     * @param args Task number to delete.
+     * @return Command that deletes the selected task.
+     * @throws GrowerException If the task number is missing or is not an integer.
+     */
     private static Command parseDelete(String args) throws GrowerException {
         int index = parseTaskIndex(args, CommandType.DELETE);
         return new DeleteCommand(index);
