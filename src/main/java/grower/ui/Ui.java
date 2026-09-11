@@ -2,6 +2,7 @@ package grower.ui;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import grower.tasks.Task;
 
@@ -163,9 +164,9 @@ public class Ui {
             return;
         }
 
-        for (int i = 0; i < tasks.size(); i++) {
-            display((i + 1) + ". " + tasks.get(i));
-        }
+        IntStream.range(0, tasks.size())
+                .mapToObj(i -> (i + 1) + ". " + tasks.get(i))
+                .forEachOrdered(this::display);
     }
 
     /**

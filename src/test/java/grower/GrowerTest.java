@@ -1,5 +1,6 @@
 package grower;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,6 +23,18 @@ public class GrowerTest {
         assertTrue(addResponse.contains("Added:"));
         assertTrue(addResponse.contains("read book"));
         assertTrue(listResponse.contains("1. [T][ ] read book"));
+    }
+
+    @Test
+    public void getResponse_find_returnsMatchesInOrderWithConsecutiveNumbers() {
+        Grower grower = new Grower(getDataFilePath());
+        grower.getResponse("todo read book");
+        grower.getResponse("todo exercise");
+        grower.getResponse("todo read notes");
+
+        assertEquals("1. [T][ ] read book" + System.lineSeparator()
+                + "2. [T][ ] read notes", grower.getResponse("find read"));
+        assertEquals("No results!!!!", grower.getResponse("find missing"));
     }
 
     @Test
