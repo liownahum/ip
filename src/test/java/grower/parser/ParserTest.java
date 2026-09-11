@@ -108,7 +108,6 @@ public class ParserTest {
                 () -> assertThrows(MissingDescriptionException.class, () -> Parser.parse("deadline")),
                 () -> assertThrows(MissingDescriptionException.class, () -> Parser.parse("event")),
                 () -> assertThrows(MissingDescriptionException.class, () -> Parser.parse("echo")),
-                () -> assertThrows(MissingDescriptionException.class, () -> Parser.parse("delete")),
                 () -> assertThrows(MissingDescriptionException.class, () -> Parser.parse("find")),
                 () -> assertThrows(MissingDescriptionException.class, () -> Parser.parse("find   "))
         );
@@ -119,6 +118,7 @@ public class ParserTest {
         assertAll(
                 () -> assertThrows(GrowerException.class, () -> Parser.parse("mark")),
                 () -> assertThrows(GrowerException.class, () -> Parser.parse("unmark")),
+                () -> assertThrows(GrowerException.class, () -> Parser.parse("delete")),
                 () -> assertThrows(GrowerException.class, () -> Parser.parse("mark one")),
                 () -> assertThrows(GrowerException.class, () -> Parser.parse("unmark 1.5")),
                 () -> assertThrows(GrowerException.class, () -> Parser.parse("delete first"))
