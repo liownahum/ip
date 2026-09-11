@@ -43,6 +43,87 @@ public class Parser {
         DELETE,
         FIND
     }
+
+    private static int parseTaskIndex(String args, CommandType command) throws GrowerException {
+        if (args.isEmpty()) {
+            throw new GrowerException("You must provide a task number to " + command + ".");
+        }
+        try {
+            int index = Integer.parseInt(args) - 1;
+            return index;
+        } catch (NumberFormatException e) {
+            throw new GrowerException("The task number must be an integer.");
+        }
+    }
+
+    private static Command parseMark(String args) throws GrowerException {
+        int index = parseTaskIndex(args, CommandType.MARK);
+        return new MarkCommand(index);
+    }
+
+    private static Command parseUnmark(String args) throws GrowerException {
+        int index = parseTaskIndex(args, CommandType.UNMARK);
+        return new UnmarkCommand(index);
+    }
+
+    private static Command parseTodo(String args) throws GrowerException {
+        if (args.isEmpty()) {
+            throw new MissingDescriptionException("The description for a todo cannot be empty.");
+        }
+        return new ToDoCommand(args);
+    }
+
+    private static Command parseDeadline(String args) throws GrowerException {
+        if (args.isEmpty()) {
+            throw new MissingDescriptionException("The description for a deadline cannot be empty.");
+        }
+        String[] deadlineParts = args.split(" /by ", 2);
+        if (deadlineParts.length < 2) {
+            throw new GrowerException(
+                    "Invalid deadline format. Use: deadline <description> /by <d/M/yyyy HHmm>");
+        }
+        try {
+            LocalDateTime deadline = LocalDateTime.parse(
+                    deadlineParts[1], INPUT_DATE_TIME_FORMATTER);
+            return new DeadlineCommand(deadlineParts[0], deadline);
+        } catch (DateTimeParseException e) {
+            throw new GrowerException(
+                    "Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
+        }
+    }
+
+    private static Command parseEvent(String args) throws GrowerException {
+        if (args.isEmpty()) {
+            throw new MissingDescriptionException("The description for an event cannot be empty.");
+        }
+        String[] eventParts = args.split(" /from ", 2);
+        if (eventParts.length < 2) {
+            throw new GrowerException("Invalid event format. Use: event <desc> /from <start> /to <end>");
+        }
+        String[] timeParts = eventParts[1].split(" /to ", 2);
+        if (timeParts.length < 2) {
+            throw new GrowerException("Invalid event format. Use: event <desc> /from <start> /to <end>");
+        }
+        try {
+            LocalDateTime start = LocalDateTime.parse(timeParts[0], INPUT_DATE_TIME_FORMATTER);
+            LocalDateTime end = LocalDateTime.parse(timeParts[1], INPUT_DATE_TIME_FORMATTER);
+
+            if (!end.isAfter(start)) {
+                throw new GrowerException("The event end must be after its start.");
+            }
+
+            return new EventCommand(eventParts[0], start, end);
+        } catch (DateTimeParseException e) {
+            throw new GrowerException(
+                    "Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
+        }
+    }
+
+    private static Command parseDelete(String args) throws GrowerException {
+        int index = parseTaskIndex(args, CommandType.DELETE);
+        return new DeleteCommand(index);
+    }
+
     /**
      * Returns the command represented by the supplied user input.
      *
@@ -70,85 +151,29 @@ public class Parser {
             case LIST:
                 return new ListCommand();
             case MARK:
-
+                return parseMark(args);
             case UNMARK:
-                if (args.isEmpty()) {
-                    throw new GrowerException("You must provide a task number to " + commandWord + ".");
-                }
-                try {
-                    int index = Integer.parseInt(args) - 1;
-                    return commandType == CommandType.MARK ? new MarkCommand(index) : new UnmarkCommand(index);
-                } catch (NumberFormatException e) {
-                    throw new GrowerException("The task number must be an integer.");
-                }
+                return parseUnmark(args);
             case TODO:
-                if (args.isEmpty()) {
-                    throw new MissingDescriptionException("The description for a todo cannot be empty.");
-                }
-                return new ToDoCommand(args);
+                return parseTodo(args);
             case DEADLINE:
-                if (args.isEmpty()) {
-                    throw new MissingDescriptionException("The description for a deadline cannot be empty.");
-                }
-                String[] deadlineParts = args.split(" /by ", 2);
-                if (deadlineParts.length < 2) {
-                    throw new GrowerException(
-                            "Invalid deadline format. Use: deadline <description> /by <d/M/yyyy HHmm>");
-                }
-                try {
-                    LocalDateTime deadline = LocalDateTime.parse(
-                            deadlineParts[1], INPUT_DATE_TIME_FORMATTER);
-                    return new DeadlineCommand(deadlineParts[0], deadline);
-                } catch (DateTimeParseException e) {
-                    throw new GrowerException(
-                            "Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
-                }
+                return parseDeadline(args);
             case EVENT:
-                if (args.isEmpty()) {
-                    throw new MissingDescriptionException("The description for an event cannot be empty.");
-                }
-                String[] eventParts = args.split(" /from ", 2);
-                if (eventParts.length < 2) {
-                    throw new GrowerException("Invalid event format. Use: event <desc> /from <start> /to <end>");
-                }
-                String[] timeParts = eventParts[1].split(" /to ", 2);
-                if (timeParts.length < 2) {
-                    throw new GrowerException("Invalid event format. Use: event <desc> /from <start> /to <end>");
-                }
-                try {
-                    LocalDateTime start = LocalDateTime.parse(timeParts[0], INPUT_DATE_TIME_FORMATTER);
-                    LocalDateTime end = LocalDateTime.parse(timeParts[1], INPUT_DATE_TIME_FORMATTER);
-
-                    if (!end.isAfter(start)) {
-                        throw new GrowerException("The event end must be after its start.");
-                    }
-
-                    return new EventCommand(eventParts[0], start, end);
-                } catch (DateTimeParseException e) {
-                    throw new GrowerException(
-                            "Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
-                }
+                return parseEvent(args);
             case ECHO:
                 if (args.isEmpty()) {
                     throw new MissingDescriptionException("There is nothing to echo!");
                 }
                 return new EchoCommand(args);
             case DELETE:
-                if (args.isEmpty()) {
-                    throw new MissingDescriptionException("Please add index to delete");
-                }
-                try {
-                    int index = Integer.parseInt(args) - 1;
-                    return new DeleteCommand(index);
-                } catch (NumberFormatException e) {
-                    throw new GrowerException("The task number must be an integer.");
-                }
+                return parseDelete(args);
             case FIND:
                 if (args.isEmpty()) {
                     throw new MissingDescriptionException("Please add a string to search!");
                 }
                 return new FindCommand(args.trim());
             default:
+                assert false : "Missing switch case for command type: " + commandType;
                 throw new UnknownCommandException("I'm sorry, but I don't know what that means :-(");
         }
     }
