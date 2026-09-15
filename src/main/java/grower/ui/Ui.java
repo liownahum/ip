@@ -78,7 +78,7 @@ public class Ui {
      * @param task Task that was added.
      */
     public void showTaskAdded(Task task) {
-        display("Added:\n" + task);
+        display("Added:\n" + task + ". Our list grows!");
     }
 
     /**
@@ -87,7 +87,7 @@ public class Ui {
      * @param task Task that was deleted.
      */
     public void showTaskDeleted(Task task) {
-        display("Removed:\n" + task);
+        display("Removed:\n" + task + "Hasty does it.");
     }
 
     /**
@@ -96,7 +96,7 @@ public class Ui {
      * @param task Task that was marked.
      */
     public void showTaskMarked(Task task) {
-        display("Marking following task as done!", task.toString());
+        display("Fine work young one! marking as done:\n", task.toString());
     }
 
     /**
@@ -115,7 +115,7 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            display("Your task list is empty.");
+            display("Time to get to work! Grow the list.");
             return;
         }
 
@@ -159,7 +159,7 @@ public class Ui {
      * Displays the goodbye message.
      */
     public void showGoodbye() {
-        display("Seeya soon");
+        display("May the shade of many tress provide comfort on your departing!");
     }
 
     /**
