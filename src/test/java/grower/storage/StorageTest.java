@@ -21,7 +21,9 @@ import grower.tasks.Event;
 import grower.tasks.Task;
 import grower.tasks.ToDo;
 
-/** Verifies saved task validation and safe file replacement. */
+/**
+ * Verifies saved task validation and safe file replacement.
+ */
 public class StorageTest {
     @TempDir
     private Path temporaryDirectory;
@@ -173,6 +175,9 @@ public class StorageTest {
         assertThrows(IOException.class, () -> new Storage(temporaryDirectory.toString()).loadTasks());
     }
 
+    /**
+     * Creates storage in the temporary directory assigned to this test.
+     */
     private Storage createStorage() {
         return new Storage(temporaryDirectory.resolve("grower.txt").toString());
     }

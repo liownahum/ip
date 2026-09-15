@@ -29,10 +29,10 @@ public class Grower {
     private final Storage storage;
 
     /** Whether the application should continue accepting commands. */
-    private boolean continueRun;
+    private boolean shouldContinueRunning;
 
     /** Prevents overwriting a file that could not be completely restored. */
-    private boolean storageReady = true;
+    private boolean isStorageReady = true;
 
     /** Startup problems retained for display in both interfaces. */
     private String startupMessage = "";
@@ -50,10 +50,10 @@ public class Grower {
      * @param filePath Path used to load and save tasks.
      */
     public Grower(String filePath) {
-        this.ui = new Ui();
-        this.taskList = new TaskList();
-        this.storage = new Storage(filePath);
-        this.continueRun = true;
+        ui = new Ui();
+        taskList = new TaskList();
+        storage = new Storage(filePath);
+        shouldContinueRunning = true;
 
         loadTasks();
     }
@@ -88,14 +88,14 @@ public class Grower {
             Ui commandUi = new Ui(false);
             boolean shouldContinue = command.execute(candidate, commandUi);
             if (!candidate.getTaskData().equals(taskList.getTaskData())) {
-                if (!storageReady) {
+                if (!isStorageReady) {
                     throw new GrowerException("Hoom! Changes are disabled to protect saved tasks. "
                             + "Repair the data file and restart Grower. " + startupMessage);
                 }
                 storage.saveTasks(candidate.getTaskData());
             }
             taskList = candidate;
-            continueRun = shouldContinue;
+            shouldContinueRunning = shouldContinue;
             ui.showResponse(commandUi.getOutput(), commandUi.getResponseType());
         } catch (GrowerException e) {
             ui.showError(e.getMessage());
@@ -113,7 +113,7 @@ public class Grower {
      * @return {@code false} after the bye command, and {@code true} otherwise.
      */
     public boolean isRunning() {
-        return continueRun;
+        return shouldContinueRunning;
     }
 
     /**
@@ -137,15 +137,15 @@ public class Grower {
                     Task task = storage.parseTask(taskData);
                     taskList.addTask(task);
                 } catch (GrowerException e) {
-                    storageReady = false;
+                    isStorageReady = false;
                     ui.showError(e.getMessage());
                 }
             }
         } catch (IOException e) {
-            storageReady = false;
+            isStorageReady = false;
             ui.showError("Could not load saved tasks. Check the data file and read permissions.");
         }
-        if (!storageReady) {
+        if (!isStorageReady) {
             ui.showError("Changes are disabled to protect saved tasks. Repair the data file and restart Grower.");
             startupMessage = ui.getOutput();
         }
@@ -166,10 +166,10 @@ public class Grower {
     private void runCli() {
         ui.showWelcome();
 
-        while (continueRun) {
+        while (shouldContinueRunning) {
             String input = ui.readCommand();
             if (input == null) {
-                continueRun = false;
+                shouldContinueRunning = false;
                 break;
             }
             ui.showSeparator();

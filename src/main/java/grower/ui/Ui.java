@@ -23,7 +23,7 @@ public class Ui {
     private final Scanner scanner;
 
     /** Whether recorded output should also be printed to the console. */
-    private final boolean printOutput;
+    private final boolean shouldPrintOutput;
 
     /**
      * Creates a command-line user interface that reads from standard input.
@@ -35,11 +35,11 @@ public class Ui {
     /**
      * Creates an interface that can buffer command output until saving succeeds.
      *
-     * @param printOutput Whether to print messages to standard output.
+     * @param shouldPrintOutput Whether to print messages to standard output.
      */
-    public Ui(boolean printOutput) {
-        this.printOutput = printOutput;
-        this.scanner = new Scanner(System.in);
+    public Ui(boolean shouldPrintOutput) {
+        this.shouldPrintOutput = shouldPrintOutput;
+        scanner = new Scanner(System.in);
     }
 
     /**
@@ -210,7 +210,7 @@ public class Ui {
             }
 
             output.append(message);
-            if (printOutput) {
+            if (shouldPrintOutput) {
                 System.out.println(message);
             }
         }

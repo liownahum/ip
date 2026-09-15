@@ -27,7 +27,7 @@ public class DeadlineCommand extends Command {
 
     @Override
     public boolean execute(TaskList tasks, Ui ui) {
-        Task newTask = new Deadline(this.description, this.deadline);
+        Task newTask = new Deadline(description, deadline);
         tasks.addTask(newTask);
         ui.showTaskAdded(newTask);
         return true;

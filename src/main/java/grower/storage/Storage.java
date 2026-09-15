@@ -89,7 +89,7 @@ public class Storage {
             throw new GrowerException("Saved task has an invalid status or description: " + line);
         }
         String type = parts[0];
-        boolean completed = parts[1].equals("1");
+        boolean isCompleted = parts[1].equals("1");
         String description = parts[2];
 
         Task task;
@@ -124,7 +124,7 @@ public class Storage {
             throw new GrowerException("Saved task has an invalid date and was skipped: " + line);
         }
 
-        if (completed) {
+        if (isCompleted) {
             task.mark();
         }
 

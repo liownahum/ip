@@ -30,7 +30,9 @@ import grower.tasks.TaskList;
 import grower.tasks.ToDo;
 import grower.ui.Ui;
 
-/** Verifies command syntax and validation of user input. */
+/**
+ * Verifies command syntax and validation of user input.
+ */
 public class ParserTest {
     private final Ui ui = new Ui();
 

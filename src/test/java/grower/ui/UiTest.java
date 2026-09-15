@@ -9,7 +9,9 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
-/** Verifies that the CLI handles the end of its input stream. */
+/**
+ * Verifies that the CLI handles the end of its input stream.
+ */
 public class UiTest {
     @Test
     public void readCommand_endOfInput_returnsNull() {

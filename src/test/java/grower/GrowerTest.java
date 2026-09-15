@@ -14,7 +14,9 @@ import org.junit.jupiter.api.io.TempDir;
 
 import grower.ui.ResponseType;
 
-/** Verifies command processing and persistence across application sessions. */
+/**
+ * Verifies command processing and persistence across application sessions.
+ */
 public class GrowerTest {
     @TempDir
     private Path temporaryDirectory;

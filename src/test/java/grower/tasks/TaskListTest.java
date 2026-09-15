@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 
 import grower.exceptions.InvalidTaskNumberException;
 
+/**
+ * Verifies task updates, snapshots, searches, and sorting.
+ */
 public class TaskListTest {
     @Test
     public void markTask_validIndex_marksAndReturnsSelectedTask() throws InvalidTaskNumberException {
@@ -176,6 +179,9 @@ public class TaskListTest {
         assertTrue(tasks.getTasks().isEmpty());
     }
 
+    /**
+     * Creates a list containing two incomplete tasks in a fixed order.
+     */
     private TaskList createTwoTaskList() {
         TaskList tasks = new TaskList();
         tasks.addTask(new ToDo("first"));

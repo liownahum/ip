@@ -22,7 +22,7 @@ public class ToDoCommand extends Command {
 
     @Override
     public boolean execute(TaskList tasks, Ui ui) {
-        Task newTask = new ToDo(this.description);
+        Task newTask = new ToDo(description);
         tasks.addTask(newTask);
         ui.showTaskAdded(newTask);
         return true;

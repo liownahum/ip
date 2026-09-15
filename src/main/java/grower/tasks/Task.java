@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
  * Represents a task with a description and completion status.
  */
 public abstract class Task {
-    //Description of task
+    /** Description displayed to the user and saved with the task. */
     private final String description;
 
-    //Status of task
-    private boolean completed;
+    /** Whether the task has been completed. */
+    private boolean isCompleted;
 
     /**
      * Creates an incomplete task with the specified description.
@@ -19,29 +19,29 @@ public abstract class Task {
      */
     public Task(String description) {
         this.description = description;
-        this.completed = false;
+        isCompleted = false;
     }
 
     /**
      * Marks this task as not completed.
      */
     public void unmark() {
-        this.completed = false;
+        isCompleted = false;
     }
 
     /**
      * Marks this task as completed.
      */
     public void mark() {
-        this.completed = true;
+        isCompleted = true;
     }
 
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public boolean isCompleted() {
-        return this.completed;
+        return isCompleted;
     }
 
     /**
@@ -67,13 +67,8 @@ public abstract class Task {
      */
     @Override
     public String toString() {
-        String tick;
-        if (completed) {
-            tick = "X";
-        } else {
-            tick = " ";
-        }
+        String tick = isCompleted ? "X" : " ";
 
-        return String.format("[%s] %s", tick, this.description);
+        return String.format("[%s] %s", tick, description);
     }
 }

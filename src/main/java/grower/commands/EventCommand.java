@@ -30,7 +30,7 @@ public class EventCommand extends Command {
 
     @Override
     public boolean execute(TaskList tasks, Ui ui) {
-        Task newTask = new Event(this.description, this.start, this.end);
+        Task newTask = new Event(description, start, end);
         tasks.addTask(newTask);
         ui.showTaskAdded(newTask);
         return true;

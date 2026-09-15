@@ -20,7 +20,7 @@ public class EchoCommand extends Command {
 
     @Override
     public boolean execute(TaskList tasks, Ui ui) {
-        ui.showMessage(this.textToEcho);
+        ui.showMessage(textToEcho);
         return true;
     }
 }

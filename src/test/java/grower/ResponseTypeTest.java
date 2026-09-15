@@ -11,7 +11,9 @@ import org.junit.jupiter.api.io.TempDir;
 import grower.ui.ResponseType;
 import grower.ui.Ui;
 
-/** Verifies alert classification and that each command starts with a clean status. */
+/**
+ * Verifies alert classification and that each command starts with a clean status.
+ */
 public class ResponseTypeTest {
     @TempDir
     private Path temporaryDirectory;

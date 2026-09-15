@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Verifies serialization of deadline tasks and their completion status.
+ */
 public class DeadlineTest {
     @Test
     public void toFileString_incompleteDeadline_returnsIncompleteSerializedDeadline() {

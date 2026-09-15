@@ -58,9 +58,9 @@ public class DialogBox extends HBox {
      * Flips the dialog box such that the ImageView is on the left and text on the right.
      */
     private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
+        ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
+        Collections.reverse(children);
+        getChildren().setAll(children);
         setAlignment(Pos.TOP_LEFT);
         dialog.getStyleClass().add("reply-label");
     }
@@ -96,15 +96,15 @@ public class DialogBox extends HBox {
      * @return Dialog box aligned to the left and styled for its attention level.
      */
     public static DialogBox getDukeDialog(String text, Image img, ResponseType type) {
-        var db = new DialogBox(text, img);
-        db.flip();
+        var dialogBox = new DialogBox(text, img);
+        dialogBox.flip();
         if (type == ResponseType.ERROR) {
-            db.dialog.getStyleClass().add("error-label");
-            db.dialog.setText("Error\n" + text);
+            dialogBox.dialog.getStyleClass().add("error-label");
+            dialogBox.dialog.setText("Error\n" + text);
         } else if (type == ResponseType.WARNING) {
-            db.dialog.getStyleClass().add("warning-label");
-            db.dialog.setText("Warning\n" + text);
+            dialogBox.dialog.getStyleClass().add("warning-label");
+            dialogBox.dialog.setText("Warning\n" + text);
         }
-        return db;
+        return dialogBox;
     }
 }
