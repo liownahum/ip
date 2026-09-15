@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
@@ -85,3 +86,30 @@ tasks.register('runCli', JavaExec) {
     mainClass = 'grower.Grower'
     standardInput = System.in
 }
+
+// Enforce the course coverage target across all production classes.
+jacoco {
+    toolVersion = '0.8.14'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                minimum = 0.50
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestReport, jacocoTestCoverageVerification

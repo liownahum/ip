@@ -53,6 +53,10 @@ public class MainWindow extends AnchorPane {
      */
     public void setGrower(Grower grower) {
         this.grower = grower;
+        if (!grower.getStartupMessage().isEmpty()) {
+            dialogContainer.getChildren().add(DialogBox.getDukeDialog(
+                    grower.getStartupMessage(), growerImage, grower.getResponseType()));
+        }
     }
 
     /**

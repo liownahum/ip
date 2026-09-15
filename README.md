@@ -17,3 +17,25 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+
+## Input errors and saved data
+
+Enter one command per line. Task numbers start at 1; use `list` to see them.
+The `list`, `sort`, and `bye` commands take no arguments. Task descriptions
+cannot contain `|`, which is reserved for the saved file format.
+
+Grower saves changes to `data/grower.txt`. If saving fails, the command is not
+applied: check the folder, write permissions, and available disk space, then
+retry. Viewing and searching tasks do not write to the file.
+
+If saved data is unreadable or contains invalid records, Grower shows a startup
+error and disables changes to protect the original file. Valid records remain
+viewable. Back up the file before repairing it, then restart Grower. Each record
+uses ` | ` between fields: task type (`T`, `D`, or `E`), completion (`0` or `1`),
+and a nonempty description. Deadlines also require an ISO date and time (for
+example, `2026-09-15T18:00:00`); events require start and end times, with the end
+strictly after the start. Extra fields are rejected.
+
+Saving requires a filesystem that supports atomic file replacement, so an
+interrupted write cannot leave a partially overwritten task file.

@@ -22,10 +22,23 @@ public class Ui {
     /** Reads commands entered through the command-line interface. */
     private final Scanner scanner;
 
+    /** Whether recorded output should also be printed to the console. */
+    private final boolean printOutput;
+
     /**
      * Creates a command-line user interface that reads from standard input.
      */
     public Ui() {
+        this(true);
+    }
+
+    /**
+     * Creates an interface that can buffer command output until saving succeeds.
+     *
+     * @param printOutput Whether to print messages to standard output.
+     */
+    public Ui(boolean printOutput) {
+        this.printOutput = printOutput;
         this.scanner = new Scanner(System.in);
     }
 
@@ -59,10 +72,10 @@ public class Ui {
     /**
      * Returns the next line of user input.
      *
-     * @return User input.
+     * @return User input, or null when the input stream ends.
      */
     public String readCommand() {
-        return scanner.nextLine();
+        return scanner.hasNextLine() ? scanner.nextLine() : null;
     }
 
     /**
@@ -197,8 +210,21 @@ public class Ui {
             }
 
             output.append(message);
-            System.out.println(message);
+            if (printOutput) {
+                System.out.println(message);
+            }
         }
+    }
+
+    /**
+     * Publishes a buffered command result after persistence has succeeded.
+     *
+     * @param message Command output.
+     * @param type Attention level of the command output.
+     */
+    public void showResponse(String message, ResponseType type) {
+        responseType = type;
+        display(message);
     }
 
     /**

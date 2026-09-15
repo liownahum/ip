@@ -4,11 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import grower.ui.ResponseType;
+
+/** Verifies command processing and persistence across application sessions. */
 public class GrowerTest {
     @TempDir
     private Path temporaryDirectory;
@@ -72,7 +78,7 @@ public class GrowerTest {
 
         String response = grower.getResponse("dance");
 
-        assertTrue(response.contains("I don't know what that means"));
+        assertTrue(response.contains("beyond my strength"));
         assertTrue(grower.isRunning());
     }
 
@@ -82,7 +88,77 @@ public class GrowerTest {
 
         String response = grower.getResponse("bye");
 
-        assertTrue(response.contains("Seeya soon"));
+        assertTrue(response.contains("departing"));
+        assertFalse(grower.isRunning());
+    }
+
+    @Test
+    public void getResponse_failedSave_preservesTasksAndAllowsRetry() throws IOException {
+        Path parent = temporaryDirectory.resolve("data");
+        // Start with a missing file, then make its parent unusable after loading.
+        Grower grower = new Grower(parent.resolve("tasks.txt").toString());
+        Files.writeString(parent, "blocks directory creation");
+
+        String response = grower.getResponse("todo read book");
+        assertTrue(response.contains("not applied"));
+        assertFalse(response.contains("Added:"));
+        assertEquals(ResponseType.ERROR, grower.getResponseType());
+        assertFalse(grower.getResponse("list").contains("read book"));
+
+        Files.delete(parent);
+        assertTrue(grower.getResponse("todo read book").contains("Added:"));
+        assertTrue(new Grower(parent.resolve("tasks.txt").toString())
+                .getResponse("list").contains("1. [T][ ] read book"));
+    }
+
+    @Test
+    public void getResponse_failedMarkDeleteOrSort_preservesOriginalState() throws IOException {
+        Grower grower = new Grower(getDataFilePath());
+        grower.getResponse("deadline later /by 1/1/2027 1200");
+        grower.getResponse("todo first");
+        String original = grower.getResponse("list");
+        Path file = Path.of(getDataFilePath());
+        Files.delete(file);
+        Files.createDirectory(file);
+        Files.writeString(file.resolve("blocker"), "keep");
+
+        for (String command : List.of("mark 1", "delete 1", "sort")) {
+            assertTrue(grower.getResponse(command).contains("not applied"));
+            assertEquals(original, grower.getResponse("list"));
+        }
+        grower.getResponse("bye");
+        assertFalse(grower.isRunning());
+    }
+
+    @Test
+    public void constructor_corruptFile_preservesOriginalAndReportsProblem() throws IOException {
+        Path file = Path.of(getDataFilePath());
+        String contents = "T | 0 | valid\nT | invalid | damaged\n";
+        Files.writeString(file, contents);
+        Grower grower = new Grower(getDataFilePath());
+
+        assertTrue(grower.getStartupMessage().contains("disabled"));
+        assertTrue(grower.getResponse("list").contains("valid"));
+        assertTrue(grower.getResponse("todo new task").contains("disabled"));
+        grower.getResponse("bye");
+        assertEquals(contents, Files.readString(file));
+    }
+
+    @Test
+    public void getResponse_readOnlyCommands_doNotCreateDataFile() {
+        Grower grower = new Grower(getDataFilePath());
+        for (String command : List.of("list", "find missing", "echo hello", "sort", "bye")) {
+            grower.getResponse(command);
+        }
+        assertFalse(Files.exists(Path.of(getDataFilePath())));
+    }
+
+    @Test
+    public void constructor_unreadableFile_disablesChangesButAllowsExit() {
+        Grower grower = new Grower(temporaryDirectory.toString());
+        assertTrue(grower.getStartupMessage().contains("Could not load"));
+        assertTrue(grower.getResponse("todo task").contains("disabled"));
+        grower.getResponse("bye");
         assertFalse(grower.isRunning());
     }
 

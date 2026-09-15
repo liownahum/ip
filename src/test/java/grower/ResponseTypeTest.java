@@ -36,9 +36,9 @@ public class ResponseTypeTest {
     }
 
     @Test
-    public void getResponse_saveFailureAfterWarning_reportsError() {
+    public void getResponse_loadFailure_blocksChangesWithError() {
         Grower grower = new Grower(temporaryDirectory.toString());
-        grower.getResponse("find missing");
+        grower.getResponse("todo new task");
         assertEquals(ResponseType.ERROR, grower.getResponseType());
     }
 

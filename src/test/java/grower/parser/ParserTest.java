@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.junit.jupiter.api.Test;
 
 import grower.commands.ByeCommand;
@@ -27,6 +30,7 @@ import grower.tasks.TaskList;
 import grower.tasks.ToDo;
 import grower.ui.Ui;
 
+/** Verifies command syntax and validation of user input. */
 public class ParserTest {
     private final Ui ui = new Ui();
 
@@ -162,6 +166,38 @@ public class ParserTest {
                         () -> Parser.parse(
                                 "event meeting /from invalid /to 31/8/2026 1100"))
         );
+    }
+
+    @Test
+    public void parse_malformedInput_rejectsUnsafeOrAmbiguousCommands() {
+        for (String input : List.of("todo a | b", "todo a\nb", "todo a\rb", "todo a\0b",
+                "bye now", "list extra", "sort reverse", "mark 0", "delete -2147483648",
+                "unmark 999999999999999999", "mark 1 2", "todo   ",
+                "deadline /by 1/1/2027 1200", "event /from 1/1/2027 1200 /to 1/1/2027 1300",
+                "deadline work /by", "event work /from 1/1/2027 1200 /to")) {
+            assertThrows(GrowerException.class, () -> Parser.parse(input), input);
+        }
+        assertThrows(GrowerException.class, () -> Parser.parse(null));
+    }
+
+    @Test
+    public void parse_tabsAndExtraSpaces_acceptsValidInput() throws GrowerException {
+        assertEquals("T | 0 | read book", executeTaskCreatingCommand("todo\t  read book ").toFileString());
+        assertInstanceOf(MarkCommand.class, Parser.parse("mark   1"));
+        assertEquals("D | 0 | work | 2027-01-01T12:00:00",
+                executeTaskCreatingCommand("deadline  work  /by  1/1/2027 1200").toFileString());
+    }
+
+    @Test
+    public void parse_turkishLocale_recognizesEnglishCommands() throws GrowerException {
+        Locale original = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+            assertInstanceOf(ListCommand.class, Parser.parse("list"));
+            assertInstanceOf(FindCommand.class, Parser.parse("find book"));
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.Locale;
 
 import grower.commands.ByeCommand;
 import grower.commands.Command;
@@ -60,8 +61,11 @@ public class Parser {
             throw new GrowerException("Hoom Hum! Young one, don't be hasty, provide a task number to " + command + ".");
         }
         try {
-            int index = Integer.parseInt(args) - 1;
-            return index;
+            int number = Integer.parseInt(args);
+            if (number <= 0) {
+                throw new GrowerException("Hoom! Task numbers start at 1. Use list to see your tasks.");
+            }
+            return number - 1;
         } catch (NumberFormatException e) {
             throw new GrowerException("Hum! Friend the task number must be an integer.");
         }
@@ -118,15 +122,15 @@ public class Parser {
             throw new MissingDescriptionException(
                     "Why so hasty little one, the description for a deadline cannot be empty.");
         }
-        String[] deadlineParts = args.split(" /by ", 2);
+        String[] deadlineParts = args.split("\\s+/by\\s+", 2);
         if (deadlineParts.length < 2) {
             throw new GrowerException(
                     "Hoomm! Invalid deadline format. Use: deadline <description> /by <d/M/yyyy HHmm>");
         }
         try {
             LocalDateTime deadline = LocalDateTime.parse(
-                    deadlineParts[1], INPUT_DATE_TIME_FORMATTER);
-            return new DeadlineCommand(deadlineParts[0], deadline);
+                    deadlineParts[1].trim(), INPUT_DATE_TIME_FORMATTER);
+            return new DeadlineCommand(deadlineParts[0].trim(), deadline);
         } catch (DateTimeParseException e) {
             throw new GrowerException(
                     "Hoomm! Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
@@ -146,23 +150,23 @@ public class Parser {
             throw new MissingDescriptionException(
                     "Why so hasty little one, the description for an event cannot be empty.");
         }
-        String[] eventParts = args.split(" /from ", 2);
+        String[] eventParts = args.split("\\s+/from\\s+", 2);
         if (eventParts.length < 2) {
             throw new GrowerException("Hoom! Invalid event format. Use: event <desc> /from <start> /to <end>");
         }
-        String[] timeParts = eventParts[1].split(" /to ", 2);
+        String[] timeParts = eventParts[1].split("\\s+/to\\s+", 2);
         if (timeParts.length < 2) {
             throw new GrowerException("Hoom! Invalid event format. Use: event <desc> /from <start> /to <end>");
         }
         try {
-            LocalDateTime start = LocalDateTime.parse(timeParts[0], INPUT_DATE_TIME_FORMATTER);
-            LocalDateTime end = LocalDateTime.parse(timeParts[1], INPUT_DATE_TIME_FORMATTER);
+            LocalDateTime start = LocalDateTime.parse(timeParts[0].trim(), INPUT_DATE_TIME_FORMATTER);
+            LocalDateTime end = LocalDateTime.parse(timeParts[1].trim(), INPUT_DATE_TIME_FORMATTER);
 
             if (!end.isAfter(start)) {
                 throw new GrowerException("Why the rush? The event end must be after its start.");
             }
 
-            return new EventCommand(eventParts[0], start, end);
+            return new EventCommand(eventParts[0].trim(), start, end);
         } catch (DateTimeParseException e) {
             throw new GrowerException(
                     "Hoom! Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
@@ -191,15 +195,30 @@ public class Parser {
     public static Command parse(String userInput) throws GrowerException {
         // Split the input into the command word and the arguments.
         // The "2" limits the split to at most two parts.
-        String[] parts = userInput.trim().split(" ", 2);
-        String commandWord = parts[0].toLowerCase();
-        String args = parts.length > 1 ? parts[1] : "";
+        if (userInput == null || userInput.isBlank()) {
+            throw new UnknownCommandException("Hoom! Enter a command, such as list or todo read book.");
+        }
+        if (userInput.contains("\n") || userInput.contains("\r") || userInput.indexOf('\0') >= 0) {
+            throw new GrowerException("Hoom! Please enter one command on a single line.");
+        }
+        String[] parts = userInput.strip().split("\\s+", 2);
+        String commandWord = parts[0];
+        String args = parts.length > 1 ? parts[1].strip() : "";
 
         CommandType commandType;
         try {
-            commandType = CommandType.valueOf(commandWord.toUpperCase());
+            commandType = CommandType.valueOf(commandWord.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
             throw new UnknownCommandException("Even for one as wise as me, this task is beyond my strength.");
+        }
+
+        if ((commandType == CommandType.BYE || commandType == CommandType.LIST
+                || commandType == CommandType.SORT) && !args.isEmpty()) {
+            throw new GrowerException("Hoom! " + commandWord + " does not take any arguments.");
+        }
+        if ((commandType == CommandType.TODO || commandType == CommandType.DEADLINE
+                || commandType == CommandType.EVENT) && args.contains("|")) {
+            throw new GrowerException("Hoom! Please remove the | character; it separates fields in saved tasks.");
         }
 
         switch (commandType) {

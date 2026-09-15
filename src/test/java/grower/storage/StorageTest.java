@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import grower.tasks.Event;
 import grower.tasks.Task;
 import grower.tasks.ToDo;
 
+/** Verifies saved task validation and safe file replacement. */
 public class StorageTest {
     @TempDir
     private Path temporaryDirectory;
@@ -140,6 +142,35 @@ public class StorageTest {
         storage.saveTasks(List.of("T | 0 | replacement task"));
 
         assertEquals(List.of("T | 0 | replacement task"), storage.loadTasks());
+    }
+
+    @Test
+    public void parseTask_invalidFields_rejectsCorruptRecords() {
+        for (String line : List.of("", "T | 2 | task", "T | 0 |  ", "T | 0 | task | extra",
+                "D | 0 | task | 2027-01-01T12:00:00 | extra", "T | 0 | a|b",
+                "T | 0 | a\nb", "T | 0 | a\0b")) {
+            assertThrows(GrowerException.class, () -> createStorage().parseTask(line), line);
+        }
+        assertThrows(GrowerException.class, () -> createStorage().parseTask(null));
+    }
+
+    @Test
+    public void saveTasks_replacementFails_cleansTemporaryFile() throws IOException {
+        Path target = temporaryDirectory.resolve("tasks.txt");
+        Files.createDirectory(target);
+        Files.writeString(target.resolve("keep.txt"), "original");
+        Storage storage = new Storage(target.toString());
+
+        assertThrows(IOException.class, () -> storage.saveTasks(List.of("T | 0 | new")));
+        assertEquals("original", Files.readString(target.resolve("keep.txt")));
+        try (var files = Files.list(temporaryDirectory)) {
+            assertEquals(List.of(target), files.toList());
+        }
+    }
+
+    @Test
+    public void loadTasks_directoryInsteadOfFile_reportsFailure() {
+        assertThrows(IOException.class, () -> new Storage(temporaryDirectory.toString()).loadTasks());
     }
 
     private Storage createStorage() {

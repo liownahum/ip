@@ -23,13 +23,19 @@ public class Grower {
     private final Ui ui;
 
     /** Tasks maintained during the current application session. */
-    private final TaskList taskList;
+    private TaskList taskList;
 
     /** Loads and saves the task list using the configured data file. */
     private final Storage storage;
 
     /** Whether the application should continue accepting commands. */
     private boolean continueRun;
+
+    /** Prevents overwriting a file that could not be completely restored. */
+    private boolean storageReady = true;
+
+    /** Startup problems retained for display in both interfaces. */
+    private String startupMessage = "";
 
     /**
      * Creates a Grower application backed by the default data file.
@@ -73,12 +79,29 @@ public class Grower {
         try {
             Command command = Parser.parse(input);
             assert command != null : "Parser must return a command when parsing succeeds";
-            continueRun = command.execute(taskList, ui);
-            storage.saveTasks(taskList.getTaskData());
+            // Rebuild independent task objects so mark, delete and sort cannot change
+            // the active list until the new state has been saved successfully.
+            TaskList candidate = new TaskList();
+            for (String taskData : taskList.getTaskData()) {
+                candidate.addTask(storage.parseTask(taskData));
+            }
+            Ui commandUi = new Ui(false);
+            boolean shouldContinue = command.execute(candidate, commandUi);
+            if (!candidate.getTaskData().equals(taskList.getTaskData())) {
+                if (!storageReady) {
+                    throw new GrowerException("Hoom! Changes are disabled to protect saved tasks. "
+                            + "Repair the data file and restart Grower. " + startupMessage);
+                }
+                storage.saveTasks(candidate.getTaskData());
+            }
+            taskList = candidate;
+            continueRun = shouldContinue;
+            ui.showResponse(commandUi.getOutput(), commandUi.getResponseType());
         } catch (GrowerException e) {
             ui.showError(e.getMessage());
         } catch (IOException e) {
-            ui.showError("Could not access the task data file. Please try again.");
+            ui.showError("Hoom! Could not save tasks. Your change was not applied. "
+                    + "Check the data folder, write permissions and free space, then try again.");
         }
 
         return ui.getOutput();
@@ -114,12 +137,27 @@ public class Grower {
                     Task task = storage.parseTask(taskData);
                     taskList.addTask(task);
                 } catch (GrowerException e) {
+                    storageReady = false;
                     ui.showError(e.getMessage());
                 }
             }
         } catch (IOException e) {
-            ui.showError("Could not load saved tasks.");
+            storageReady = false;
+            ui.showError("Could not load saved tasks. Check the data file and read permissions.");
         }
+        if (!storageReady) {
+            ui.showError("Changes are disabled to protect saved tasks. Repair the data file and restart Grower.");
+            startupMessage = ui.getOutput();
+        }
+    }
+
+    /**
+     * Returns loading errors for display when the GUI first opens.
+     *
+     * @return Startup errors, or an empty string when all tasks loaded successfully.
+     */
+    public String getStartupMessage() {
+        return startupMessage;
     }
 
     /**
@@ -130,6 +168,10 @@ public class Grower {
 
         while (continueRun) {
             String input = ui.readCommand();
+            if (input == null) {
+                continueRun = false;
+                break;
+            }
             ui.showSeparator();
             getResponse(input);
             ui.showSeparator();
