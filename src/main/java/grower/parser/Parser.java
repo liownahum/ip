@@ -57,13 +57,13 @@ public class Parser {
      */
     private static int parseTaskIndex(String args, CommandType command) throws GrowerException {
         if (args.isEmpty()) {
-            throw new GrowerException("You must provide a task number to " + command + ".");
+            throw new GrowerException("Hoom Hum! Young one, don't be hasty, provide a task number to " + command + ".");
         }
         try {
             int index = Integer.parseInt(args) - 1;
             return index;
         } catch (NumberFormatException e) {
-            throw new GrowerException("The task number must be an integer.");
+            throw new GrowerException("Hum! Friend the task number must be an integer.");
         }
     }
 
@@ -100,7 +100,8 @@ public class Parser {
      */
     private static Command parseTodo(String args) throws GrowerException {
         if (args.isEmpty()) {
-            throw new MissingDescriptionException("The description for a todo cannot be empty.");
+            throw new MissingDescriptionException(
+                    "Why so hasty little one, the description for a todo cannot be empty.");
         }
         return new ToDoCommand(args);
     }
@@ -114,12 +115,13 @@ public class Parser {
      */
     private static Command parseDeadline(String args) throws GrowerException {
         if (args.isEmpty()) {
-            throw new MissingDescriptionException("The description for a deadline cannot be empty.");
+            throw new MissingDescriptionException(
+                    "Why so hasty little one, the description for a deadline cannot be empty.");
         }
         String[] deadlineParts = args.split(" /by ", 2);
         if (deadlineParts.length < 2) {
             throw new GrowerException(
-                    "Invalid deadline format. Use: deadline <description> /by <d/M/yyyy HHmm>");
+                    "Hoomm! Invalid deadline format. Use: deadline <description> /by <d/M/yyyy HHmm>");
         }
         try {
             LocalDateTime deadline = LocalDateTime.parse(
@@ -127,7 +129,7 @@ public class Parser {
             return new DeadlineCommand(deadlineParts[0], deadline);
         } catch (DateTimeParseException e) {
             throw new GrowerException(
-                    "Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
+                    "Hoomm! Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
         }
     }
 
@@ -141,28 +143,29 @@ public class Parser {
      */
     private static Command parseEvent(String args) throws GrowerException {
         if (args.isEmpty()) {
-            throw new MissingDescriptionException("The description for an event cannot be empty.");
+            throw new MissingDescriptionException(
+                    "Why so hasty little one, the description for an event cannot be empty.");
         }
         String[] eventParts = args.split(" /from ", 2);
         if (eventParts.length < 2) {
-            throw new GrowerException("Invalid event format. Use: event <desc> /from <start> /to <end>");
+            throw new GrowerException("Hoom! Invalid event format. Use: event <desc> /from <start> /to <end>");
         }
         String[] timeParts = eventParts[1].split(" /to ", 2);
         if (timeParts.length < 2) {
-            throw new GrowerException("Invalid event format. Use: event <desc> /from <start> /to <end>");
+            throw new GrowerException("Hoom! Invalid event format. Use: event <desc> /from <start> /to <end>");
         }
         try {
             LocalDateTime start = LocalDateTime.parse(timeParts[0], INPUT_DATE_TIME_FORMATTER);
             LocalDateTime end = LocalDateTime.parse(timeParts[1], INPUT_DATE_TIME_FORMATTER);
 
             if (!end.isAfter(start)) {
-                throw new GrowerException("The event end must be after its start.");
+                throw new GrowerException("Why the rush? The event end must be after its start.");
             }
 
             return new EventCommand(eventParts[0], start, end);
         } catch (DateTimeParseException e) {
             throw new GrowerException(
-                    "Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
+                    "Hoom! Use the date format d/M/yyyy HHmm, for example: 28/8/2026 1800.");
         }
     }
 
@@ -196,7 +199,7 @@ public class Parser {
         try {
             commandType = CommandType.valueOf(commandWord.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new UnknownCommandException("I'm sorry, but I don't know what that means :-(");
+            throw new UnknownCommandException("Even for one as wise as me, this task is beyond my strength.");
         }
 
         switch (commandType) {
@@ -218,19 +221,19 @@ public class Parser {
                 return new SortCommand();
             case ECHO:
                 if (args.isEmpty()) {
-                    throw new MissingDescriptionException("There is nothing to echo!");
+                    throw new MissingDescriptionException("There is not echo without first, a sound!");
                 }
                 return new EchoCommand(args);
             case DELETE:
                 return parseDelete(args);
             case FIND:
                 if (args.isEmpty()) {
-                    throw new MissingDescriptionException("Please add a string to search!");
+                    throw new MissingDescriptionException("Hoom Hum! Speak forth your search request first.");
                 }
                 return new FindCommand(args.trim());
             default:
                 assert false : "Missing switch case for command type: " + commandType;
-                throw new UnknownCommandException("I'm sorry, but I don't know what that means :-(");
+                throw new UnknownCommandException("Even for one as wise as me, this task is beyond my strength.");
         }
     }
 }
