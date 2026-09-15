@@ -6,6 +6,7 @@ import grower.Grower;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -32,6 +33,7 @@ public class Main extends Application {
             stage.setMinHeight(220);
             stage.setMinWidth(417);
             stage.setTitle("Grow-er");
+            stage.getIcons().add(new Image(Main.class.getResource("/images/icon.jpg").toExternalForm()));
             stage.setScene(new Scene(mainWindow));
             stage.show();
         } catch (IOException e) {

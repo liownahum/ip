@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -46,6 +47,11 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
+        // Crop the center to a square so the circular avatar does not stretch the photo.
+        double side = Math.min(img.getWidth(), img.getHeight());
+        double cropX = (img.getWidth() - side) / 2;
+        double cropY = (img.getHeight() - side) / 2;
+        displayPicture.setViewport(new Rectangle2D(cropX, cropY, side, side));
     }
 
     /**

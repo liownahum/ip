@@ -33,7 +33,7 @@ public class MainWindow extends AnchorPane {
     private Grower grower;
 
     /** Avatar displayed beside messages entered by the user. */
-    private final Image userImage = new Image(getClass().getResourceAsStream("/images/user.jpg"));
+    private final Image userImage = new Image(getClass().getResourceAsStream("/images/user.png"));
 
     /** Avatar displayed beside responses produced by Grower. */
     private final Image growerImage = new Image(getClass().getResourceAsStream("/images/grower.png"));
