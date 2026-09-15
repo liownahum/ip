@@ -1,6 +1,6 @@
 .root {
     /* Create a looked-up color called "main-color" within root. */
-    -fx-background-image: url("/images/background.jpg ");
+    -fx-background-image: url("../images/background.jpg");
     -fx-background-size: cover;
 
     gruvbox-bg0: #282828;
@@ -54,7 +54,7 @@
 
 .scroll-pane,
 .scroll-pane .viewport {
-    -fx-background-color: gruvbox-bg0;
+    -fx-background-color: transparent;
 }
 
 .scroll-bar {
