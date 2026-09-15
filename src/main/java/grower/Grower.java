@@ -9,6 +9,7 @@ import grower.parser.Parser;
 import grower.storage.Storage;
 import grower.tasks.Task;
 import grower.tasks.TaskList;
+import grower.ui.ResponseType;
 import grower.ui.Ui;
 
 /**
@@ -90,6 +91,15 @@ public class Grower {
      */
     public boolean isRunning() {
         return continueRun;
+    }
+
+    /**
+     * Returns the attention level of the most recent response.
+     *
+     * @return Type used to style the response in the GUI.
+     */
+    public ResponseType getResponseType() {
+        return ui.getResponseType();
     }
 
     /**

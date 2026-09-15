@@ -16,6 +16,9 @@ public class Ui {
     /** Output produced by the current command for retrieval by the GUI. */
     private final StringBuilder output = new StringBuilder();
 
+    /** Highest attention level recorded for the current command. */
+    private ResponseType responseType = ResponseType.NORMAL;
+
     /** Reads commands entered through the command-line interface. */
     private final Scanner scanner;
 
@@ -127,6 +130,19 @@ public class Ui {
      * @param message Error message to display.
      */
     public void showError(String message) {
+        responseType = ResponseType.ERROR;
+        display(message);
+    }
+
+    /**
+     * Displays an advisory without overriding an error from the same command.
+     *
+     * @param message Advisory text to display.
+     */
+    public void showWarning(String message) {
+        if (responseType != ResponseType.ERROR) {
+            responseType = ResponseType.WARNING;
+        }
         display(message);
     }
 
@@ -160,7 +176,7 @@ public class Ui {
      */
     public void showSearchResults(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            display("No results!!!!");
+            showWarning("No results!!!!");
             return;
         }
 
@@ -190,6 +206,16 @@ public class Ui {
      */
     public void clearOutput() {
         output.setLength(0);
+        responseType = ResponseType.NORMAL;
+    }
+
+    /**
+     * Returns the current response's attention level for GUI styling.
+     *
+     * @return Current response type.
+     */
+    public ResponseType getResponseType() {
+        return responseType;
     }
 
     /**

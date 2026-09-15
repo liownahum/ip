@@ -48,6 +48,25 @@ public class GrowerTest {
     }
 
     @Test
+    public void getResponse_sort_updatesTaskNumbersAndPersistsOrder() {
+        Grower grower = new Grower(getDataFilePath());
+        grower.getResponse("event meeting /from 12/9/2026 1000 /to 12/9/2026 1400");
+        grower.getResponse("deadline submit work /by 12/9/2026 1200");
+        grower.getResponse("todo read book");
+
+        String sortedResponse = grower.getResponse("sort");
+
+        assertTrue(sortedResponse.contains("1. [T][ ] read book"));
+        assertTrue(sortedResponse.contains("2. [D][ ] submit work"));
+        assertTrue(sortedResponse.contains("3. [E][ ] meeting"));
+        assertTrue(grower.isRunning());
+        Grower restored = new Grower(getDataFilePath());
+        assertEquals(sortedResponse, restored.getResponse("list"));
+        restored.getResponse("mark 1");
+        assertTrue(restored.getResponse("list").contains("1. [T][X] read book"));
+    }
+
+    @Test
     public void getResponse_invalidCommand_returnsErrorMessage() {
         Grower grower = new Grower(getDataFilePath());
 

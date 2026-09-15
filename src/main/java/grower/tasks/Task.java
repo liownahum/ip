@@ -1,5 +1,7 @@
 package grower.tasks;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents a task with a description and completion status.
  */
@@ -48,6 +50,15 @@ public abstract class Task {
      * @return Serialized task data.
      */
     public abstract String toFileString();
+
+    /**
+     * Returns the time used for sorting, or null for a dateless task.
+     *
+     * @return Sorting time, or null if the task has no date.
+     */
+    public LocalDateTime getSortTime() {
+        return null;
+    }
 
     /**
      * Returns a display string containing the completion status and description.

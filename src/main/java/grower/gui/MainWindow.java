@@ -71,7 +71,7 @@ public class MainWindow extends AnchorPane {
         String response = grower.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, growerImage)
+                DialogBox.getDukeDialog(response, growerImage, grower.getResponseType())
         );
         userInput.clear();
 

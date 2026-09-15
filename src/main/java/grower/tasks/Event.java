@@ -37,6 +37,11 @@ public class Event extends Task {
         );
     }
 
+    @Override
+    public LocalDateTime getSortTime() {
+        return end;
+    }
+
     /**
      * Returns a display string containing the task and its start and end times.
      *

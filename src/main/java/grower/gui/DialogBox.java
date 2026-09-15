@@ -3,6 +3,7 @@ package grower.gui;
 import java.io.IOException;
 import java.util.Collections;
 
+import grower.ui.ResponseType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -77,8 +78,27 @@ public class DialogBox extends HBox {
      * @return Dialog box aligned to the left.
      */
     public static DialogBox getDukeDialog(String text, Image img) {
+        return getDukeDialog(text, img, ResponseType.NORMAL);
+    }
+
+    /**
+     * Creates a Grower reply with a distinct alert color and a readable status heading.
+     *
+     * @param text Response text.
+     * @param img Grower's display image.
+     * @param type Attention level supplied by the application logic.
+     * @return Dialog box aligned to the left and styled for its attention level.
+     */
+    public static DialogBox getDukeDialog(String text, Image img, ResponseType type) {
         var db = new DialogBox(text, img);
         db.flip();
+        if (type == ResponseType.ERROR) {
+            db.dialog.getStyleClass().add("error-label");
+            db.dialog.setText("Error\n" + text);
+        } else if (type == ResponseType.WARNING) {
+            db.dialog.getStyleClass().add("warning-label");
+            db.dialog.setText("Warning\n" + text);
+        }
         return db;
     }
 }

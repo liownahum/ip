@@ -14,6 +14,7 @@ import grower.commands.EventCommand;
 import grower.commands.FindCommand;
 import grower.commands.ListCommand;
 import grower.commands.MarkCommand;
+import grower.commands.SortCommand;
 import grower.commands.ToDoCommand;
 import grower.commands.UnmarkCommand;
 import grower.exceptions.GrowerException;
@@ -41,7 +42,8 @@ public class Parser {
         EVENT,
         ECHO,
         DELETE,
-        FIND
+        FIND,
+        SORT
     }
 
     /**
@@ -212,6 +214,8 @@ public class Parser {
                 return parseDeadline(args);
             case EVENT:
                 return parseEvent(args);
+            case SORT:
+                return new SortCommand();
             case ECHO:
                 if (args.isEmpty()) {
                     throw new MissingDescriptionException("There is nothing to echo!");

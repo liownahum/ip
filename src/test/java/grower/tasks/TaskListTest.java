@@ -133,6 +133,49 @@ public class TaskListTest {
         assertTrue(matches.isEmpty());
     }
 
+    @Test
+    public void sortByTime_mixedTasks_ordersByTimeWithTodosFirst() {
+        TaskList tasks = new TaskList();
+        LocalDateTime time = LocalDateTime.of(2026, 9, 12, 12, 0);
+        Task event = new Event("meeting", time.minusHours(2), time.plusHours(2));
+        Task deadline = new Deadline("submit work", time);
+        Task todo = new ToDo("read book");
+        tasks.addTask(event);
+        tasks.addTask(deadline);
+        tasks.addTask(todo);
+
+        tasks.sortByTime();
+
+        assertEquals(List.of(todo, deadline, event), tasks.getTasks());
+    }
+
+    @Test
+    public void sortByTime_equalTimes_preservesRelativeOrder() {
+        TaskList tasks = new TaskList();
+        LocalDateTime time = LocalDateTime.of(2026, 9, 12, 12, 0);
+        Task deadline = new Deadline("submit work", time);
+        Task event = new Event("meeting", time.minusHours(1), time);
+        Task firstTodo = new ToDo("read book");
+        Task secondTodo = new ToDo("exercise");
+        tasks.addTask(deadline);
+        tasks.addTask(firstTodo);
+        tasks.addTask(event);
+        tasks.addTask(secondTodo);
+
+        tasks.sortByTime();
+
+        assertEquals(List.of(firstTodo, secondTodo, deadline, event), tasks.getTasks());
+    }
+
+    @Test
+    public void sortByTime_emptyList_remainsEmpty() {
+        TaskList tasks = new TaskList();
+
+        tasks.sortByTime();
+
+        assertTrue(tasks.getTasks().isEmpty());
+    }
+
     private TaskList createTwoTaskList() {
         TaskList tasks = new TaskList();
         tasks.addTask(new ToDo("first"));

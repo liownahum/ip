@@ -1,6 +1,7 @@
 package grower.tasks;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import grower.exceptions.InvalidTaskNumberException;
@@ -109,5 +110,16 @@ public class TaskList {
         return listOfTasks.stream()
                 .filter(task -> task.getDescription().contains(keyword))
                 .toList();
+    }
+
+    /**
+     * Sorts tasks in place, placing dateless tasks first and then
+     * dated tasks from earliest to latest. Equal times retain
+     * their existing relative order.
+     */
+    public void sortByTime() {
+        listOfTasks.sort(Comparator.comparing(
+                Task::getSortTime,
+                Comparator.nullsFirst(Comparator.naturalOrder())));
     }
 }

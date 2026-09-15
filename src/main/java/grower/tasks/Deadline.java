@@ -33,6 +33,11 @@ public class Deadline extends Task {
         );
     }
 
+    @Override
+    public LocalDateTime getSortTime() {
+        return deadline;
+    }
+
     /**
      * Returns a display string containing the task and its deadline.
      *
