@@ -83,8 +83,8 @@ public class DialogBox extends HBox {
      * @param img Grower's display image.
      * @return Dialog box aligned to the left.
      */
-    public static DialogBox getDukeDialog(String text, Image img) {
-        return getDukeDialog(text, img, ResponseType.NORMAL);
+    public static DialogBox getGrowerDialog(String text, Image img) {
+        return getGrowerDialog(text, img, ResponseType.NORMAL);
     }
 
     /**
@@ -95,7 +95,7 @@ public class DialogBox extends HBox {
      * @param type Attention level supplied by the application logic.
      * @return Dialog box aligned to the left and styled for its attention level.
      */
-    public static DialogBox getDukeDialog(String text, Image img, ResponseType type) {
+    public static DialogBox getGrowerDialog(String text, Image img, ResponseType type) {
         var dialogBox = new DialogBox(text, img);
         dialogBox.flip();
         if (type == ResponseType.ERROR) {

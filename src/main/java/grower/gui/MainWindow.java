@@ -54,7 +54,7 @@ public class MainWindow extends AnchorPane {
     public void setGrower(Grower grower) {
         this.grower = grower;
         if (!grower.getStartupMessage().isEmpty()) {
-            dialogContainer.getChildren().add(DialogBox.getDukeDialog(
+            dialogContainer.getChildren().add(DialogBox.getGrowerDialog(
                     grower.getStartupMessage(), growerImage, grower.getResponseType()));
         }
     }
@@ -75,7 +75,7 @@ public class MainWindow extends AnchorPane {
         String response = grower.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, growerImage, grower.getResponseType())
+                DialogBox.getGrowerDialog(response, growerImage, grower.getResponseType())
         );
         userInput.clear();
 

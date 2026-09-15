@@ -1,6 +1,6 @@
-# Grow-er project template
+# Grower
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+Grower is a Java task management application. Given below are instructions on how to use it.
 
 ## Setting up in Intellij
 
